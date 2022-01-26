@@ -8,7 +8,7 @@ namespace NaiveBayes
 {
     class Data
     {
-        string[][] rawData = new string[30][];
+        public string[][] rawData = new string[30][];
         public Data()
         {
             rawData[0] = new string[] { "analyst", "male", "high", "conservative" };
