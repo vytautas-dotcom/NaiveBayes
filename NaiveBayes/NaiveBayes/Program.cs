@@ -23,7 +23,11 @@ namespace NaiveBayes
             Console.WriteLine(new string('-', 64));
             show.ShowData(test, 6, 0, true);
 
-            
+            BayesClassifier bayes = new BayesClassifier(train);
+            bayes.Train();
+            double prob = bayes.Probability(new string[] { "barista", "female", "low"}, "liberal");
+
+            Console.WriteLine("Probability: " + prob);
         }
     }
 }

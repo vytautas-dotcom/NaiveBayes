@@ -8,11 +8,15 @@ namespace NaiveBayes
 {
     class BayesClassifier
     {
-        public Dictionary<string, int>[] stringToInt;
-        public int[][][] jointCounts;
-        public int[] dependentCounts;
-
-        public void Train(string[][] trainData)
+        private Dictionary<string, int>[] stringToInt;
+        private int[][][] jointCounts;
+        private int[] dependentCounts;
+        private string[][] trainData;
+        public BayesClassifier(string[][] data)
+        {
+            trainData = data;
+        }
+        public void Train()
         {
             int rows = trainData.Length;
             int cols = trainData[0].Length;
@@ -75,6 +79,63 @@ namespace NaiveBayes
                 int yIndex = stringToInt[cols - 1][y];
                 ++dependentCounts[yIndex];
             }
+        }
+
+        public double Probability(string[] xVal, string yVal)
+        {
+            int numOfFeatures = xVal.Length;
+            int numOfDifUnconditionals = stringToInt[trainData[0].Length - 1].Count;
+
+            double[][] conditionals = new double[numOfDifUnconditionals][];
+
+            for (int i = 0; i < conditionals.Length; i++)
+                conditionals[i] = new double[numOfFeatures];
+
+            double[] unconditionals = new double[numOfDifUnconditionals];
+
+            int y = stringToInt[numOfFeatures][yVal];
+            int[] x = new int[numOfFeatures];
+
+            for (int i = 0; i < numOfFeatures; i++)
+            {
+                string s = xVal[i];
+                x[i] = stringToInt[i][s];
+            }
+
+            for (int i = 0; i < numOfDifUnconditionals; i++)
+            {
+                for (int j = 0; j < numOfFeatures; j++)
+                {
+                    int xCol = j;
+                    int xRow = x[j];
+                    int yIndex = i;
+
+                    conditionals[i][j] = (jointCounts[xCol][xRow][yIndex] * 1.0) / (dependentCounts[yIndex]);
+                }
+            }
+
+            int totalDependent = 0;
+            for (int i = 0; i < numOfDifUnconditionals; i++)
+                totalDependent += dependentCounts[i];
+
+            for (int i = 0; i < numOfDifUnconditionals; i++)
+                unconditionals[i] = (dependentCounts[i] * 1.0) / totalDependent;
+
+            double[] partials = new double[2];
+
+            for (int i = 0; i < numOfDifUnconditionals; i++)
+            {
+                partials[i] = 1.0;
+                for (int j = 0; j < numOfFeatures; j++)
+                    partials[i] *= conditionals[i][j];
+                partials[i] *= unconditionals[i];
+            }
+
+            double evidence = 0.0;
+            for (int i = 0; i < numOfDifUnconditionals; i++)
+                evidence += partials[i];
+
+            return partials[y] / evidence;
         }
     }
 }
