@@ -13,15 +13,17 @@ namespace NaiveBayes
 
             show.ShowData(data.rawData, 5, 5, true);
 
-            show.SplitData(data.rawData, 37, out string[][] train, out string[][] test);
+            show.SplitData(data.rawData, 27, out string[][] train, out string[][] test);
 
             Console.WriteLine("Train data");
             Console.WriteLine(new string('-', 64));
-            show.ShowData(train, 5, 1, true);
+            show.ShowData(train, 24, 0, true);
 
             Console.WriteLine("Test data");
             Console.WriteLine(new string('-', 64));
-            show.ShowData(test, 5, 1, true);
+            show.ShowData(test, 6, 0, true);
+
+            
         }
     }
 }
